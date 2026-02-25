@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StoreService } from '../services/store.service';
+import { ProductCategory } from '../types';
 
 @Component({
-    selector: 'app-home-view',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-home-view',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <div class="pb-24">
       <!-- Header -->
       <div class="bg-[#003366] text-white p-6 rounded-b-[2.5rem] shadow-lg relative">
@@ -93,11 +94,11 @@ import { StoreService } from '../services/store.service';
   `
 })
 export class HomeViewComponent {
-    store = inject(StoreService);
-    categories = [
-        { id: 'DRUG', label: '醫藥服務', icon: 'pill', color: '#003366' },
-        { id: 'FOOD', label: '保健食品', icon: 'potted_plant', color: '#4CAF50' },
-        { id: 'DEVICE', label: '醫療器材', icon: 'monitor_heart', color: '#FF9800' },
-        { id: 'DAILY', label: '一般產品', icon: 'shopping_basket', color: '#9C27B0' }
-    ];
+  store = inject(StoreService);
+  categories: { id: ProductCategory; label: string; icon: string; color: string }[] = [
+    { id: 'DRUG', label: '醫藥服務', icon: 'pill', color: '#003366' },
+    { id: 'FOOD', label: '保健食品', icon: 'potted_plant', color: '#4CAF50' },
+    { id: 'DEVICE', label: '醫療器材', icon: 'monitor_heart', color: '#FF9800' },
+    { id: 'DAILY', label: '一般產品', icon: 'shopping_basket', color: '#9C27B0' }
+  ];
 }

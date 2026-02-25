@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { StoreService } from '../services/store.service';
 
 @Component({
-    selector: 'app-admin-dashboard',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+   selector: 'app-admin-dashboard',
+   standalone: true,
+   imports: [CommonModule],
+   template: `
     <div class="flex h-screen bg-gray-50 overflow-hidden text-gray-800">
       <!-- Sidebar -->
       <aside class="w-64 bg-[#003366] text-white flex flex-col shadow-2xl z-20">
@@ -23,18 +23,15 @@ import { StoreService } from '../services/store.service';
         </div>
         
         <nav class="flex-1 p-4 space-y-2 mt-4">
-          <button (click)="activeTab.set('PRODUCTS')" [class.bg-white\/10]="activeTab() === 'PRODUCTS'"
-                  class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group">
+          <button (click)="activeTab.set('PRODUCTS')" [class.bg-white]="activeTab() === 'PRODUCTS'" [class.bg-opacity-10]="activeTab() === 'PRODUCTS'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group">
             <span class="material-symbols-rounded text-xl opacity-70 group-hover:opacity-100">inventory_2</span>
             <span class="text-sm font-medium">產品管理</span>
           </button>
-          <button (click)="activeTab.set('USERS')" [class.bg-white\/10]="activeTab() === 'USERS'"
-                  class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group">
+          <button (click)="activeTab.set('USERS')" [class.bg-white]="activeTab() === 'USERS'" [class.bg-opacity-10]="activeTab() === 'USERS'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group">
             <span class="material-symbols-rounded text-xl opacity-70 group-hover:opacity-100">group</span>
             <span class="text-sm font-medium">用戶列表</span>
           </button>
-          <button (click)="activeTab.set('SETTINGS')" [class.bg-white\/10]="activeTab() === 'SETTINGS'"
-                  class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group">
+          <button (click)="activeTab.set('SETTINGS')" [class.bg-white]="activeTab() === 'SETTINGS'" [class.bg-opacity-10]="activeTab() === 'SETTINGS'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors group">
             <span class="material-symbols-rounded text-xl opacity-70 group-hover:opacity-100">settings</span>
             <span class="text-sm font-medium">系統設定</span>
           </button>
@@ -141,8 +138,7 @@ import { StoreService } from '../services/store.service';
                              <td class="px-6 py-4 text-xs text-gray-400">2026/02/22</td>
                              <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                   <button (click)="store.selectedProductId.set(p.id); store.setView('ADMIN_EDIT')" 
-                                           class="w-8 h-8 rounded-lg flex items-center justify-center text-blue-500 hover:bg-blue-50 transition-colors">
+                                   <button (click)="store.selectedProductId.set(p.id); store.setView('ADMIN_EDIT')" class="w-8 h-8 rounded-lg flex items-center justify-center text-blue-500 hover:bg-blue-50 transition-colors">
                                       <span class="material-symbols-rounded text-xl icon-filled">edit</span>
                                    </button>
                                    <button class="w-8 h-8 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors">
@@ -167,6 +163,6 @@ import { StoreService } from '../services/store.service';
   `
 })
 export class AdminDashboardComponent {
-    store = inject(StoreService);
-    activeTab = signal<'PRODUCTS' | 'USERS' | 'SETTINGS'>('PRODUCTS');
+   store = inject(StoreService);
+   activeTab = signal<'PRODUCTS' | 'USERS' | 'SETTINGS'>('PRODUCTS');
 }

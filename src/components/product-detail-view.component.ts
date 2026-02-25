@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { StoreService } from '../services/store.service';
 
 @Component({
-    selector: 'app-product-detail-view',
-    standalone: true,
-    imports: [CommonModule],
-    template: `
+  selector: 'app-product-detail-view',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
     <div class="min-h-screen bg-gray-50 pb-24" *ngIf="store.selectedProduct() as p">
       <!-- Top Nav -->
       <div class="sticky top-0 bg-white/80 backdrop-blur-md p-4 flex justify-between items-center z-10 border-b border-gray-100">
@@ -66,8 +66,7 @@ import { StoreService } from '../services/store.service';
         </div>
 
         <!-- DM Button -->
-        <button [class.hidden]="!p.dmImageUrl" (click)="openUrl(p.dmImageUrl)"
-                class="w-full mt-6 bg-[#003366] text-white p-5 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-lg shadow-blue-900/20 active:scale-[0.98] transition-transform">
+        <button [class.hidden]="!p.dmImageUrl" (click)="openUrl(p.dmImageUrl)" class="w-full mt-6 bg-[#003366] text-white p-5 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-lg shadow-blue-900/20 active:scale-[0.98] transition-transform">
           <span class="material-symbols-rounded">picture_as_pdf</span> 查看產品 PDF DM
         </button>
       </div>
@@ -80,14 +79,14 @@ import { StoreService } from '../services/store.service';
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05); }
   `]
 })
 export class ProductDetailViewComponent {
-    store = inject(StoreService);
+  store = inject(StoreService);
 
-    openUrl(url: any) {
-        if (url) window.open(url, '_blank');
-    }
+  openUrl(url: any) {
+    if (url) window.open(url, '_blank');
+  }
 }
