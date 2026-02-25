@@ -65,10 +65,18 @@ import { StoreService } from '../services/store.service';
           </div>
         </div>
 
-        <!-- DM Button -->
-        <button [class.hidden]="!p.dmImageUrl" (click)="openUrl(p.dmImageUrl)" class="w-full mt-6 bg-[#003366] text-white p-5 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-lg shadow-blue-900/20 active:scale-[0.98] transition-transform">
-          <span class="material-symbols-rounded">picture_as_pdf</span> 查看產品 PDF DM
-        </button>
+        <!-- Action Buttons -->
+        <div class="space-y-4 mt-8">
+          <!-- 詳細介紹按鈕 (Blue) -->
+          <button *ngIf="p.productUrl" (click)="openUrl(p.productUrl)" class="w-full bg-[#003366] text-white p-5 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-lg shadow-blue-900/20 active:scale-[0.98] transition-transform">
+            <span class="material-symbols-rounded text-xl">language</span> 查看產品詳細介紹 <span class="material-symbols-rounded text-sm">open_in_new</span>
+          </button>
+
+          <!-- DM 下載按鈕 (Green) -->
+          <button *ngIf="p.dmImageUrl" (click)="openUrl(p.dmImageUrl)" class="w-full bg-[#E8F5E9] text-[#2E7D32] p-5 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-md active:scale-[0.98] transition-transform border border-[#C8E6C9]">
+            <span class="material-symbols-rounded">picture_as_pdf</span> 下載產品 DM 型錄 <span class="material-symbols-rounded text-sm">download</span>
+          </button>
+        </div>
       </div>
 
       <!-- Bottom bar for actions -->

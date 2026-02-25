@@ -24,7 +24,7 @@ echo [2/4] Staging and Committing...
 git config user.email "samwu@example.com"
 git config user.name "Sam Wu"
 git add .
-git commit -m "Initial commit from Antigravity"
+git commit -m "Update from Antigravity: %date% %time%"
 
 echo [3/4] Setting Remote URL...
 git remote remove origin >nul 2>&1

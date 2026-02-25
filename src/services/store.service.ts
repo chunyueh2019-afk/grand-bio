@@ -129,12 +129,11 @@ export class StoreService {
   removeFromShareList(id: string) { this.cart.update(c => c.filter(x => x.id !== id)); }
 
   async updateProduct(updated: Product) {
-    // 將前端 camelCase 映射回資料庫 snake_case
+    // 建立基礎更新物件
     const dbUpdate: any = {
       name: updated.name,
       category: updated.category,
       price: updated.price,
-      origin: updated.origin,
       description: updated.description,
       permit_number: updated.permitNumber,
       barcode: updated.barcode,
@@ -142,17 +141,34 @@ export class StoreService {
       dm_image_url: updated.dmImageUrl,
       manual_url: updated.manualUrl,
       product_url: updated.productUrl,
-      category_label: updated.categoryLabel,
       is_favorite: updated.isFavorite,
-      details: updated.details || {}
+      // 將產地資訊優先存入 details JSON 中以維護韌性
+      details: {
+        ...(updated.details || {}),
+        origin: updated.origin
+      }
     };
 
     try {
-      await this.supabaseService.updateProduct(updated.id, dbUpdate);
+      // 嘗試完整更新（包含 origin 欄位，以防資料庫已補齊）
+      const fullUpdate = { ...dbUpdate, origin: updated.origin };
+      await this.supabaseService.updateProduct(updated.id, fullUpdate);
       await this.loadProducts();
       this.setView('ADMIN');
     } catch (error: any) {
-      alert('儲存失敗：' + error.message);
+      // 如果 origin 欄位報錯，則使用不含 origin 欄位的備份方案
+      if (error.message?.includes('origin')) {
+        try {
+          await this.supabaseService.updateProduct(updated.id, dbUpdate);
+          await this.loadProducts();
+          this.setView('ADMIN');
+          return;
+        } catch (retryError: any) {
+          alert('儲存失敗 : ' + retryError.message);
+          return;
+        }
+      }
+      alert('儲存失敗 : ' + error.message);
     }
   }
 

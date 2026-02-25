@@ -5,10 +5,10 @@ import { StoreService } from '../services/store.service';
 import { Product } from '../types';
 
 @Component({
-    selector: 'app-admin-product-edit',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
-    template: `
+   selector: 'app-admin-product-edit',
+   standalone: true,
+   imports: [CommonModule, FormsModule],
+   template: `
     <div class="min-h-screen bg-gray-50 p-8 text-gray-800" *ngIf="store.selectedProduct() as p">
       <div class="max-w-4xl mx-auto">
         <div class="flex items-center justify-between mb-8">
@@ -112,6 +112,10 @@ import { Product } from '../types';
                              <button class="px-4 py-4 bg-blue-50 text-blue-600 rounded-2xl font-bold mt-1 active:scale-95 transition-transform"><span class="material-symbols-rounded">upload_file</span></button>
                           </div>
                        </div>
+                       <div class="col-span-2">
+                          <label class="text-[10px] font-bold text-gray-500 ml-1">產品詳細介紹連結 (外部網址)</label>
+                          <input type="text" [(ngModel)]="p.productUrl" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500/10 mt-1 text-xs font-mono" placeholder="https://www.example.com/product-details">
+                       </div>
                     </div>
                  </div>
               </div>
@@ -122,25 +126,25 @@ import { Product } from '../types';
   `
 })
 export class AdminProductEditComponent {
-    store = inject(StoreService);
+   store = inject(StoreService);
 
-    save() {
-        const p = this.store.selectedProduct();
-        if (!p) return;
+   save() {
+      const p = this.store.selectedProduct();
+      if (!p) return;
 
-        // 基本驗證
-        if (!p.name || !p.price) {
-            alert('請先填寫產品名稱與價格！');
-            return;
-        }
+      // 基本驗證
+      if (!p.name || !p.price) {
+         alert('請先填寫產品名稱與價格！');
+         return;
+      }
 
-        // 更新類別標籤 (為了視覺一致性)
-        const labels: any = { 'DRUG': '醫藥服務', 'FOOD': '保健食品', 'DEVICE': '醫療器材', 'DAILY': '一般產品' };
-        p.categoryLabel = labels[p.category] || '其它';
+      // 更新類別標籤 (為了視覺一致性)
+      const labels: any = { 'DRUG': '醫藥服務', 'FOOD': '保健食品', 'DEVICE': '醫療器材', 'DAILY': '一般產品' };
+      p.categoryLabel = labels[p.category] || '其它';
 
-        // 同步 origin 到 details 作為備份，確保韌性
-        if (p.details) p.details['origin'] = p.origin;
+      // 同步 origin 到 details 作為備份，確保韌性
+      if (p.details) p.details['origin'] = p.origin;
 
-        this.store.updateProduct(p);
-    }
+      this.store.updateProduct(p);
+   }
 }
