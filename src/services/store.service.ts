@@ -129,19 +129,29 @@ export class StoreService {
   removeFromShareList(id: string) { this.cart.update(c => c.filter(x => x.id !== id)); }
 
   async updateProduct(updated: Product) {
-    const dbUpdate = { ...updated, origin: updated.origin };
+    // 將前端 camelCase 映射回資料庫 snake_case
+    const dbUpdate: any = {
+      name: updated.name,
+      category: updated.category,
+      price: updated.price,
+      origin: updated.origin,
+      description: updated.description,
+      permit_number: updated.permitNumber,
+      barcode: updated.barcode,
+      image_url: updated.imageUrl,
+      dm_image_url: updated.dmImageUrl,
+      manual_url: updated.manualUrl,
+      product_url: updated.productUrl,
+      category_label: updated.categoryLabel,
+      is_favorite: updated.isFavorite,
+      details: updated.details || {}
+    };
+
     try {
       await this.supabaseService.updateProduct(updated.id, dbUpdate);
       await this.loadProducts();
       this.setView('ADMIN');
     } catch (error: any) {
-      if (error.message?.includes('origin') && (error.message?.includes('column') || error.message?.includes('schema cache'))) {
-        const fallback = { ...dbUpdate }; delete (fallback as any).origin;
-        await this.supabaseService.updateProduct(updated.id, fallback);
-        await this.loadProducts();
-        this.setView('ADMIN');
-        return;
-      }
       alert('儲存失敗：' + error.message);
     }
   }
