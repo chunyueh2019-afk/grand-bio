@@ -8,20 +8,22 @@ import { ProductListViewComponent } from './components/product-list-view.compone
 import { ProductDetailViewComponent } from './components/product-detail-view.component';
 import { AdminDashboardComponent } from './components/admin-dashboard.component';
 import { AdminProductEditComponent } from './components/admin-product-edit.component';
+import { AdminLoginComponent } from './components/admin-login.component';
 
 @Component({
-    selector: 'app-root',
-    standalone: true,
-    imports: [
-        CommonModule,
-        NavBarComponent,
-        HomeViewComponent,
-        ProductListViewComponent,
-        ProductDetailViewComponent,
-        AdminDashboardComponent,
-        AdminProductEditComponent
-    ],
-    template: `
+   selector: 'app-root',
+   standalone: true,
+   imports: [
+      CommonModule,
+      NavBarComponent,
+      HomeViewComponent,
+      ProductListViewComponent,
+      ProductDetailViewComponent,
+      AdminDashboardComponent,
+      AdminProductEditComponent,
+      AdminLoginComponent
+   ],
+   template: `
     <div class="max-w-md mx-auto min-h-screen bg-white shadow-2xl relative overflow-hidden" [class.max-w-none]="store.currentView().startsWith('ADMIN')">
       
       <!-- Dynamic View Container -->
@@ -40,6 +42,9 @@ import { AdminProductEditComponent } from './components/admin-product-edit.compo
         }
         @if (store.currentView() === 'ADMIN_EDIT') {
           <app-admin-product-edit></app-admin-product-edit>
+        }
+        @if (store.currentView() === 'LOGIN') {
+          <app-admin-login></app-admin-login>
         }
         @if (store.currentView() === 'SHARE') {
           <div class="p-8 text-center py-20">
@@ -102,7 +107,7 @@ import { AdminProductEditComponent } from './components/admin-product-edit.compo
   `,
 })
 export class App {
-    store = inject(StoreService);
+   store = inject(StoreService);
 }
 
 bootstrapApplication(App).catch((err) => console.error(err));

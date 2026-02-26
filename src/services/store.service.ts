@@ -106,7 +106,14 @@ export class StoreService {
 
   readonly selectedProduct = computed(() => this.products().find(p => p.id === this.selectedProductId()) || null);
 
-  setView(view: any) { this.currentView.set(view); }
+  setView(view: 'HOME' | 'LIST' | 'DETAIL' | 'ADMIN' | 'SHARE' | 'ADMIN_EDIT' | 'CATALOGS' | 'CONTACT' | 'LOGIN') {
+    // 導航守衛：進入管理頁面必須已登入
+    if ((view === 'ADMIN' || view === 'ADMIN_EDIT') && !this.isLoggedIn()) {
+      this.currentView.set('LOGIN');
+      return;
+    }
+    this.currentView.set(view);
+  }
   selectCategory(cat: any) { this.currentCategory.set(cat); this.setView('LIST'); }
   viewProduct(id: string) { this.selectedProductId.set(id); this.setView('DETAIL'); this.addToHistory(id); }
   addToHistory(id: string) { if (!this.history().includes(id)) this.history.update(h => [id, ...h.slice(0, 19)]); }

@@ -79,12 +79,6 @@ import { StoreService } from '../services/store.service';
         </div>
       </div>
 
-      <!-- Bottom bar for actions -->
-      <div class="fixed bottom-24 left-6 right-6 z-10 flex gap-4">
-        <button (click)="store.addToShareList(p)" class="flex-1 bg-white border-2 border-[#003366] text-[#003366] p-4 rounded-2xl font-bold active:scale-[0.98] transition-transform">
-           加入分享清單
-        </button>
-      </div>
     </div>
   `,
   styles: [`

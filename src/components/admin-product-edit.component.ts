@@ -23,8 +23,11 @@ import { Product } from '../types';
            </div>
            
            <div class="flex gap-3">
-              <button (click)="store.setView('ADMIN')" class="px-6 py-2.5 rounded-xl border-2 border-gray-100 font-bold text-gray-600 hover:bg-white transition-colors">取消變更</button>
-              <button (click)="save()" class="px-8 py-2.5 bg-[#003366] text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 active:scale-[0.98] transition-transform">儲存更改</button>
+              <button (click)="store.setView('ADMIN')" class="px-6 py-2.5 rounded-xl border-2 border-gray-100 font-bold text-gray-600 hover:bg-white transition-colors" [disabled]="isLoading()">取消變更</button>
+              <button (click)="save()" [disabled]="isLoading()" class="px-8 py-2.5 bg-[#003366] text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 active:scale-[0.98] transition-all flex items-center gap-2">
+                 <span *ngIf="isLoading()" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                 {{ isLoading() ? '儲存中...' : '儲存更改' }}
+              </button>
            </div>
         </div>
 
@@ -127,8 +130,9 @@ import { Product } from '../types';
 })
 export class AdminProductEditComponent {
    store = inject(StoreService);
+   isLoading = signal(false);
 
-   save() {
+   async save() {
       const p = this.store.selectedProduct();
       if (!p) return;
 
@@ -138,13 +142,21 @@ export class AdminProductEditComponent {
          return;
       }
 
-      // 更新類別標籤 (為了視覺一致性)
-      const labels: any = { 'DRUG': '醫藥服務', 'FOOD': '保健食品', 'DEVICE': '醫療器材', 'DAILY': '一般產品' };
-      p.categoryLabel = labels[p.category] || '其它';
+      this.isLoading.set(true);
+      try {
+         // 更新類別標籤 (為了視覺一致性)
+         const labels: any = { 'DRUG': '醫藥服務', 'FOOD': '保健食品', 'DEVICE': '醫療器材', 'DAILY': '一般產品' };
+         p.categoryLabel = labels[p.category] || '其它';
 
-      // 同步 origin 到 details 作為備份，確保韌性
-      if (p.details) p.details['origin'] = p.origin;
+         // 同步 origin 到 details 作為備份，確保韌性
+         if (!p.details) p.details = {};
+         p.details['origin'] = p.origin;
 
-      this.store.updateProduct(p);
+         await this.store.updateProduct(p);
+      } catch (error: any) {
+         alert('系統錯誤：' + (error.message || '無法儲存變更'));
+      } finally {
+         this.isLoading.set(false);
+      }
    }
 }
