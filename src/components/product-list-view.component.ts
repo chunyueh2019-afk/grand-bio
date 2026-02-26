@@ -38,7 +38,11 @@ import { ProductCategory } from '../types';
                </div>
                <div class="p-4 flex-1 flex flex-col">
                   <span class="text-[9px] font-black text-[#003366] uppercase opacity-60 tracking-tighter mb-1">{{ p.categoryLabel }}</span>
-                  <h3 class="font-bold text-gray-800 text-sm line-clamp-2 mb-2 leading-tight flex-1">{{ p.name }}</h3>
+                  <h3 class="font-bold text-gray-800 text-sm line-clamp-2 mb-1 leading-tight flex-1">{{ p.name }}</h3>
+                  <div class="flex items-center gap-1 text-[9px] text-gray-400 font-mono mb-2">
+                     <span class="material-symbols-rounded text-[10px]">barcode</span>
+                     {{ p.barcode || '未設條碼' }}
+                  </div>
                   <div class="flex items-center justify-between mt-auto">
                      <span class="text-sm font-black text-[#003366]">NT$ {{ p.price }}</span>
                      <span class="w-6 h-6 rounded-lg bg-[#003366]/5 text-[#003366] flex items-center justify-center">

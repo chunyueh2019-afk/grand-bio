@@ -9,6 +9,7 @@ import { ProductDetailViewComponent } from './components/product-detail-view.com
 import { AdminDashboardComponent } from './components/admin-dashboard.component';
 import { AdminProductEditComponent } from './components/admin-product-edit.component';
 import { AdminLoginComponent } from './components/admin-login.component';
+import { ShareListViewComponent } from './components/share-list-view.component';
 
 @Component({
    selector: 'app-root',
@@ -21,7 +22,8 @@ import { AdminLoginComponent } from './components/admin-login.component';
       ProductDetailViewComponent,
       AdminDashboardComponent,
       AdminProductEditComponent,
-      AdminLoginComponent
+      AdminLoginComponent,
+      ShareListViewComponent
    ],
    template: `
     <div class="max-w-md mx-auto min-h-screen bg-white shadow-2xl relative overflow-hidden" [class.max-w-none]="store.currentView().startsWith('ADMIN')">
@@ -47,12 +49,7 @@ import { AdminLoginComponent } from './components/admin-login.component';
           <app-admin-login></app-admin-login>
         }
         @if (store.currentView() === 'SHARE') {
-          <div class="p-8 text-center py-20">
-             <span class="material-symbols-rounded text-6xl text-gray-200">share</span>
-             <h2 class="text-xl font-bold mt-4">分享清單</h2>
-             <p class="text-gray-400 mt-2">目前清單內有 {{ store.cart().length }} 項產品</p>
-             <button (click)="store.setView('LIST')" class="mt-6 px-6 py-2 bg-[#003366] text-white rounded-full font-bold">去找產品</button>
-          </div>
+          <app-share-list-view></app-share-list-view>
         }
         @if (store.currentView() === 'CATALOGS') {
            <div class="p-8">

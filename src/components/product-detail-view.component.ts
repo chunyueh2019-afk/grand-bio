@@ -67,6 +67,21 @@ import { StoreService } from '../services/store.service';
 
         <!-- Action Buttons -->
         <div class="space-y-4 mt-8">
+          <!-- 分享清單按鈕 -->
+          <button (click)="store.toggleCart(p)" 
+                  class="w-full p-5 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-lg transition-all active:scale-[0.95]"
+                  [class.bg-red-50]="store.isInCart(p.id)"
+                  [class.text-red-500]="store.isInCart(p.id)"
+                  [class.border]="store.isInCart(p.id)"
+                  [class.border-red-100]="store.isInCart(p.id)"
+                  [class.bg-[#003366]]="!store.isInCart(p.id)"
+                  [class.text-white]="!store.isInCart(p.id)">
+            <span class="material-symbols-rounded text-xl" [class.icon-filled]="store.isInCart(p.id)">
+              {{ store.isInCart(p.id) ? 'remove_shopping_cart' : 'add_shopping_cart' }}
+            </span> 
+            {{ store.isInCart(p.id) ? '從分享清單移除' : '加入分享清單' }}
+          </button>
+
           <!-- 詳細介紹按鈕 (Blue) -->
           <button *ngIf="p.productUrl" (click)="openUrl(p.productUrl)" class="w-full bg-[#003366] text-white p-5 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-lg shadow-blue-900/20 active:scale-[0.98] transition-transform">
             <span class="material-symbols-rounded text-xl">language</span> 查看產品詳細介紹 <span class="material-symbols-rounded text-sm">open_in_new</span>

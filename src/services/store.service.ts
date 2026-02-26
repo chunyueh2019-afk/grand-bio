@@ -132,8 +132,11 @@ export class StoreService {
     this.products.update(list => list.map(x => x.id === id ? { ...x, isFavorite: newState } : x));
   }
 
-  addToShareList(p: Product) { if (!this.cart().find(x => x.id === p.id)) this.cart.update(c => [...c, p]); }
+  isInCart(id: string) { return !!this.cart().find(x => x.id === id); }
+  addToShareList(p: Product) { if (!this.isInCart(p.id)) this.cart.update(c => [...c, p]); }
+  toggleCart(p: Product) { if (this.isInCart(p.id)) this.removeFromShareList(p.id); else this.addToShareList(p); }
   removeFromShareList(id: string) { this.cart.update(c => c.filter(x => x.id !== id)); }
+  clearCart() { this.cart.set([]); }
 
   async updateProduct(updated: Product) {
     // 建立基礎更新物件
