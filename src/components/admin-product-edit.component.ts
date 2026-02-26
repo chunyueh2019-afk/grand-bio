@@ -86,9 +86,15 @@ import { Product } from '../types';
                              <option value="DAILY">一般產品</option>
                           </select>
                        </div>
-                       <div>
-                          <label class="text-[10px] font-bold text-gray-500 ml-1">核准字號/証號</label>
-                          <input type="text" [(ngModel)]="p.permitNumber" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500/10 mt-1 text-sm">
+                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 col-span-2">
+                          <div>
+                             <label class="text-[10px] font-bold text-gray-500 ml-1">核准字號/証號</label>
+                             <input type="text" [(ngModel)]="p.permitNumber" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500/10 mt-1 text-sm">
+                          </div>
+                          <div>
+                             <label class="text-[10px] font-bold text-gray-500 ml-1">產品條碼 (Barcode)</label>
+                             <input type="text" [(ngModel)]="p.barcode" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500/10 mt-1 text-sm font-mono" placeholder="請掃描或輸入條碼">
+                          </div>
                        </div>
                     </div>
                  </div>
