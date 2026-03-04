@@ -26,4 +26,4 @@ yarn-error.log*
 /src/environments/environment.prod.ts
 
 # IMPORTANT: Ignore environment.ts to protect secrets
-/src/environments/environment.ts
+# /src/environments/environment.ts
