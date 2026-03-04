@@ -104,7 +104,52 @@ export class StoreService {
     return this.products().filter(p => p.category === cat);
   });
 
-  readonly selectedProduct = computed(() => this.products().find(p => p.id === this.selectedProductId()) || null);
+  readonly selectedProduct = computed(() => {
+    const id = this.selectedProductId();
+    if (id === 'NEW') {
+      return {
+        id: 'NEW',
+        name: '',
+        category: 'DRUG',
+        categoryLabel: '醫藥服務',
+        price: 0,
+        description: '',
+        imageUrl: 'https://placehold.co/400x400/f3f4f6/003366?text=New+Product',
+        origin: '台灣',
+        details: {
+          ingredients: '',
+          packSize: ''
+        },
+        isFavorite: false
+      } as Product;
+    }
+    return this.products().find(p => p.id === id) || null;
+  });
+
+  async createProduct(product: Product) {
+    const { id, ...newProduct } = product;
+    const dbData = {
+      name: newProduct.name,
+      category: newProduct.category,
+      category_label: newProduct.categoryLabel,
+      price: newProduct.price,
+      description: newProduct.description,
+      image_url: newProduct.imageUrl,
+      origin: newProduct.origin,
+      details: newProduct.details,
+      permit_number: newProduct.permitNumber,
+      barcode: newProduct.barcode
+    };
+
+    try {
+      await this.supabaseService.addProduct(dbData);
+      await this.loadProducts();
+      this.setView('ADMIN');
+    } catch (error: any) {
+      alert('建立產品失敗 : ' + error.message);
+      throw error;
+    }
+  }
 
   setView(view: 'HOME' | 'LIST' | 'DETAIL' | 'ADMIN' | 'SHARE' | 'ADMIN_EDIT' | 'CATALOGS' | 'CONTACT' | 'LOGIN') {
     // 導航守衛：進入管理頁面必須已登入
