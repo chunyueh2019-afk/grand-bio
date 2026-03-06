@@ -179,25 +179,41 @@ export class StoreService {
 
   async createProduct(product: Product) {
     const { id, ...newProduct } = product;
-    const dbData = {
+
+    // 基礎資料 (確保產地資訊存在於 details 中以防主欄位缺失)
+    const dbBaseData: any = {
       name: newProduct.name,
       category: newProduct.category,
       category_label: newProduct.categoryLabel,
       price: newProduct.price,
       description: newProduct.description,
       image_url: newProduct.imageUrl,
-      origin: newProduct.origin,
-      details: newProduct.details,
       permit_number: newProduct.permitNumber,
-      barcode: newProduct.barcode
+      barcode: newProduct.barcode,
+      details: {
+        ...(newProduct.details || {}),
+        origin: newProduct.origin
+      }
     };
 
     try {
-      await this.supabaseService.addProduct(dbData);
+      // 嘗試完整新增（包含 origin 欄位）
+      const fullData = { ...dbBaseData, origin: newProduct.origin };
+      await this.supabaseService.addProduct(fullData);
       await this.loadProducts();
       this.setView('ADMIN');
     } catch (error: any) {
-      alert('建立產品失敗 : ' + error.message);
+      // 如果報錯包含 origin，則嘗試不帶 origin 欄位的備份方案
+      if (error.message?.includes('origin')) {
+        try {
+          await this.supabaseService.addProduct(dbBaseData);
+          await this.loadProducts();
+          this.setView('ADMIN');
+          return;
+        } catch (retryError: any) {
+          throw retryError;
+        }
+      }
       throw error;
     }
   }
@@ -270,11 +286,10 @@ export class StoreService {
           this.setView('ADMIN');
           return;
         } catch (retryError: any) {
-          alert('儲存失敗 : ' + retryError.message);
-          return;
+          throw retryError;
         }
       }
-      alert('儲存失敗 : ' + error.message);
+      throw error;
     }
   }
 
