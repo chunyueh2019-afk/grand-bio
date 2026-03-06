@@ -196,6 +196,9 @@ export class StoreService {
 
   addToShareList(p: Product) { if (!this.cart().find(x => x.id === p.id)) this.cart.update(c => [...c, p]); }
   removeFromShareList(id: string) { this.cart.update(c => c.filter(x => x.id !== id)); }
+  isInCart(id: string) { return !!this.cart().find(x => x.id === id); }
+  toggleCart(p: Product) { if (this.isInCart(p.id)) this.removeFromShareList(p.id); else this.addToShareList(p); }
+  clearCart() { this.cart.set([]); }
 
   async updateProduct(updated: Product) {
     // 建立基礎更新物件
