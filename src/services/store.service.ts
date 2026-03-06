@@ -81,6 +81,57 @@ export class StoreService {
     }
   }
 
+  async generateMockProducts() {
+    const mockData = [
+      {
+        name: 'Grand Vitality 高效濃縮魚油',
+        category: 'FOOD',
+        category_label: '保健食品',
+        price: 1850,
+        description: '採用高純度深海魚油萃取，富含 Omega-3、EPA 與 DHA。透過特殊去腥技術，呈現清澈無異味的頂級品質，適合全家人日常保養。',
+        image_url: 'https://images.unsplash.com/photo-1584308666744-24d5e478ac61?auto=format&fit=crop&q=80&w=400',
+        origin: '挪威',
+        permit_number: '衛部健食字第1020034號',
+        barcode: '4712345678013',
+        details: { ingredients: '深海魚油、維生素E', packSize: '60粒/瓶' }
+      },
+      {
+        name: 'Pro-Heal 專業級護理敷料',
+        category: 'DEVICE',
+        category_label: '醫療器材',
+        price: 450,
+        description: '針對各類創傷研發之先進敷料，具備高透氣性與防水特點。能有效維持傷口濕潤環境，加速癒合並減少疤痕組織生成。',
+        image_url: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?auto=format&fit=crop&q=80&w=400',
+        origin: '德國',
+        permit_number: '衛署醫器輸字第098231號',
+        barcode: '4012345678912',
+        details: { ingredients: '醫療級矽膠、PU防水膜', packSize: '10片/盒' }
+      },
+      {
+        name: 'Daily+ 舒緩深層修護霜',
+        category: 'DAILY',
+        category_label: '一般產品',
+        price: 890,
+        description: '專為敏感乾燥肌膚設計的日常修護霜。富含神經醯胺與植萃精華，臨床實證能有效舒緩乾癢不適，重建肌膚自然屏障。',
+        image_url: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=400',
+        origin: '法國',
+        permit_number: '一般化妝品免備查',
+        barcode: '3012345678901',
+        details: { ingredients: '神經醯胺、洋甘菊萃取', packSize: '150ml/瓶' }
+      }
+    ];
+
+    try {
+      for (const item of mockData) {
+        await this.supabaseService.addProduct(item);
+      }
+      await this.loadProducts();
+      alert('測試資料已成功建立！');
+    } catch (error: any) {
+      alert('建立失敗：' + error.message);
+    }
+  }
+
   async loadCompanyInfo() {
     const data = await this.supabaseService.getCompanyInfo();
     if (data) {
