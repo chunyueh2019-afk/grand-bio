@@ -2,6 +2,6 @@
 // 請將此檔案複製為 environment.ts 並填入您的 Supabase 資訊
 export const environment = {
     production: false,
-    supabaseUrl: 'https://ijrfdbzmmzvnkgtzdwdm.supabase.co',
-    supabaseKey: 'sb_publishable_kl17XsOGcZnq2Y7E6DBisQ_JIA33aEL'
+    supabaseUrl: 'https://您的項目ID.supabase.co',
+    supabaseKey: '您的匿名公開金鑰 (Anon Key)'
 };
