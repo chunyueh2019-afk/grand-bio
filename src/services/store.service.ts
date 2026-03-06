@@ -126,6 +126,20 @@ export class StoreService {
     return this.products().find(p => p.id === id) || null;
   });
 
+  setView(view: 'HOME' | 'LIST' | 'DETAIL' | 'ADMIN' | 'SHARE' | 'ADMIN_EDIT' | 'CATALOGS' | 'CONTACT' | 'LOGIN') {
+    // 導航守衛：進入管理頁面必須已登入
+    if ((view === 'ADMIN' || view === 'ADMIN_EDIT') && !this.isLoggedIn()) {
+      this.currentView.set('LOGIN');
+      return;
+    }
+    this.currentView.set(view);
+  }
+  selectCategory(cat: any) { this.currentCategory.set(cat); this.setView('LIST'); }
+  viewProduct(id: string) { this.selectedProductId.set(id); this.setView('DETAIL'); this.addToHistory(id); }
+  addToHistory(id: string) { if (!this.history().includes(id)) this.history.update(h => [id, ...h.slice(0, 19)]); }
+  viewCatalogs() { this.setView('CATALOGS'); }
+  viewContact() { this.setView('CONTACT'); }
+
   async createProduct(product: Product) {
     const { id, ...newProduct } = product;
 
@@ -167,19 +181,6 @@ export class StoreService {
     }
   }
 
-  setView(view: 'HOME' | 'LIST' | 'DETAIL' | 'ADMIN' | 'SHARE' | 'ADMIN_EDIT' | 'CATALOGS' | 'CONTACT' | 'LOGIN') {
-    // 導航守衛：進入管理頁面必須已登入
-    if ((view === 'ADMIN' || view === 'ADMIN_EDIT') && !this.isLoggedIn()) {
-      this.currentView.set('LOGIN');
-      return;
-    }
-    this.currentView.set(view);
-  }
-  selectCategory(cat: any) { this.currentCategory.set(cat); this.setView('LIST'); }
-  viewProduct(id: string) { this.selectedProductId.set(id); this.setView('DETAIL'); this.addToHistory(id); }
-  addToHistory(id: string) { if (!this.history().includes(id)) this.history.update(h => [id, ...h.slice(0, 19)]); }
-  viewCatalogs() { this.setView('CATALOGS'); }
-  viewContact() { this.setView('CONTACT'); }
   toggleNotifications() {
     this.showNotifications.set(!this.showNotifications());
     if (this.showNotifications()) this.notifications.update(list => list.map(n => ({ ...n, read: true })));
@@ -193,11 +194,8 @@ export class StoreService {
     this.products.update(list => list.map(x => x.id === id ? { ...x, isFavorite: newState } : x));
   }
 
-  isInCart(id: string) { return !!this.cart().find(x => x.id === id); }
-  addToShareList(p: Product) { if (!this.isInCart(p.id)) this.cart.update(c => [...c, p]); }
-  toggleCart(p: Product) { if (this.isInCart(p.id)) this.removeFromShareList(p.id); else this.addToShareList(p); }
+  addToShareList(p: Product) { if (!this.cart().find(x => x.id === p.id)) this.cart.update(c => [...c, p]); }
   removeFromShareList(id: string) { this.cart.update(c => c.filter(x => x.id !== id)); }
-  clearCart() { this.cart.set([]); }
 
   async updateProduct(updated: Product) {
     // 建立基礎更新物件
@@ -235,10 +233,11 @@ export class StoreService {
           this.setView('ADMIN');
           return;
         } catch (retryError: any) {
-          throw retryError;
+          alert('儲存失敗 : ' + retryError.message);
+          return;
         }
       }
-      throw error;
+      alert('儲存失敗 : ' + error.message);
     }
   }
 

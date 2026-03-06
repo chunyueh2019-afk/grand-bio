@@ -9,9 +9,7 @@ import { Product } from '../types';
    standalone: true,
    imports: [CommonModule, FormsModule],
    template: `
-    @let p = store.selectedProduct();
-    @if (p) {
-    <div class="min-h-screen bg-gray-50 p-8 text-gray-800">
+    <div class="min-h-screen bg-gray-50 p-8 text-gray-800" *ngIf="store.selectedProduct() as p">
       <div class="max-w-4xl mx-auto">
         <div class="flex items-center justify-between mb-8">
            <div class="flex items-center gap-4">
@@ -27,7 +25,7 @@ import { Product } from '../types';
            <div class="flex gap-3">
               <button (click)="store.setView('ADMIN')" class="px-6 py-2.5 rounded-xl border-2 border-gray-100 font-bold text-gray-600 hover:bg-white transition-colors" [disabled]="isLoading()">取消變更</button>
               <button (click)="save()" [disabled]="isLoading()" class="px-8 py-2.5 bg-[#003366] text-white rounded-xl font-bold shadow-lg shadow-blue-900/20 active:scale-[0.98] transition-all flex items-center gap-2">
-                 @if (isLoading()) {<span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>}
+                 <span *ngIf="isLoading()" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                  {{ isLoading() ? '儲存中...' : '儲存更改' }}
               </button>
            </div>
@@ -88,15 +86,9 @@ import { Product } from '../types';
                              <option value="DAILY">一般產品</option>
                           </select>
                        </div>
-                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 col-span-2">
-                          <div>
-                             <label class="text-[10px] font-bold text-gray-500 ml-1">核准字號/証號</label>
-                             <input type="text" [(ngModel)]="p.permitNumber" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500/10 mt-1 text-sm">
-                          </div>
-                          <div>
-                             <label class="text-[10px] font-bold text-gray-500 ml-1">產品條碼 (Barcode)</label>
-                             <input type="text" [(ngModel)]="p.barcode" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500/10 mt-1 text-sm font-mono" placeholder="請掃描或輸入條碼">
-                          </div>
+                       <div>
+                          <label class="text-[10px] font-bold text-gray-500 ml-1">核准字號/証號</label>
+                          <input type="text" [(ngModel)]="p.permitNumber" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500/10 mt-1 text-sm">
                        </div>
                     </div>
                  </div>
@@ -134,7 +126,6 @@ import { Product } from '../types';
         </div>
       </div>
     </div>
-    }
   `
 })
 export class AdminProductEditComponent {

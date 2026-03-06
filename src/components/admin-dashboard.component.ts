@@ -102,7 +102,8 @@ import { StoreService } from '../services/store.service';
                        <h3 class="font-bold text-gray-800">商品清單</h3>
                        <p class="text-xs text-gray-400 mt-0.5">目前共載入 {{ store.products().length }} 項產品</p>
                     </div>
-                    <button (click)="store.selectedProductId.set('NEW'); store.setView('ADMIN_EDIT')" class="px-4 py-2 bg-[#003366] text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[#004488] transition-colors shadow-lg shadow-blue-900/10">
+                    <button (click)="store.selectedProductId.set('NEW'); store.setView('ADMIN_EDIT')" 
+                            class="px-4 py-2 bg-[#003366] text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[#004488] transition-colors shadow-lg shadow-blue-900/10">
                        <span class="material-symbols-rounded text-lg">add</span> 新增產品
                     </button>
                  </div>
