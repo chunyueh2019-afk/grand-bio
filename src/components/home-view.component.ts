@@ -49,7 +49,7 @@ import { ProductCategory } from '../types';
         <div class="mb-2">
           <div class="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-wide text-blue-50 backdrop-blur">
             <span class="h-1.5 w-1.5 rounded-full" [class.bg-emerald-300]="store.isOnline()" [class.bg-amber-300]="!store.isOnline()"></span>
-            {{ store.isOnline() ? '雲端資料已連線' : '離線型錄模式' }}
+            {{ store.isOnline() ? '網路連線正常' : '離線型錄模式' }}
           </div>
           <h2 class="text-2xl font-bold mb-1">{{ store.companyInfo().slogan }}</h2>
           <p class="text-blue-100 text-sm opacity-80">專業代理高品質醫療器材與保健食品</p>
