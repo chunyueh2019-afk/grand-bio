@@ -1,13 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { StoreService } from '../services/store.service';
 import { ProductCategory } from '../types';
 
 @Component({
-  selector: 'app-home-view',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
+    selector: 'app-home-view',
+    imports: [],
+    template: `
     <div class="pb-24">
       <!-- Header -->
       <div class="bg-[#003366] text-white p-6 rounded-b-[2.5rem] shadow-lg relative">

@@ -1,12 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { StoreService } from '../services/store.service';
 
 @Component({
-   selector: 'app-admin-dashboard',
-   standalone: true,
-   imports: [CommonModule],
-   template: `
+    selector: 'app-admin-dashboard',
+    imports: [],
+    template: `
     <div class="flex h-screen bg-gray-50 overflow-hidden text-gray-800">
       <!-- Sidebar -->
       <aside class="w-64 bg-[#003366] text-white flex flex-col shadow-2xl z-20">

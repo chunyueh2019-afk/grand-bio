@@ -1,13 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { StoreService } from '../services/store.service';
 import { ProductCategory } from '../types';
 
 @Component({
-   selector: 'app-product-list-view',
-   standalone: true,
-   imports: [CommonModule],
-   template: `
+    selector: 'app-product-list-view',
+    imports: [],
+    template: `
     <div class="pb-24">
       <!-- Search & Filter Area -->
       <div class="sticky top-0 bg-white shadow-sm z-30 p-4 border-b border-gray-100">

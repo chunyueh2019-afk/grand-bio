@@ -1,12 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../services/store.service';
 
 @Component({
     selector: 'app-admin-login',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [FormsModule],
     template: `
     <div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6 pb-32">
        <div class="w-full max-w-sm space-y-8">

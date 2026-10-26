@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, provideZoneChangeDetection } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+
 import { StoreService } from './services/store.service';
 import { NavBarComponent } from './components/nav-bar.component';
 import { HomeViewComponent } from './components/home-view.component';
@@ -11,19 +11,17 @@ import { AdminProductEditComponent } from './components/admin-product-edit.compo
 import { AdminLoginComponent } from './components/admin-login.component';
 
 @Component({
-   selector: 'app-root',
-   standalone: true,
-   imports: [
-      CommonModule,
-      NavBarComponent,
-      HomeViewComponent,
-      ProductListViewComponent,
-      ProductDetailViewComponent,
-      AdminDashboardComponent,
-      AdminProductEditComponent,
-      AdminLoginComponent
-   ],
-   template: `
+    selector: 'app-root',
+    imports: [
+    NavBarComponent,
+    HomeViewComponent,
+    ProductListViewComponent,
+    ProductDetailViewComponent,
+    AdminDashboardComponent,
+    AdminProductEditComponent,
+    AdminLoginComponent
+],
+    template: `
     <div class="max-w-md mx-auto min-h-screen bg-white shadow-2xl relative overflow-hidden" [class.max-w-none]="store.currentView().startsWith('ADMIN')">
       
       <!-- Dynamic View Container -->
@@ -104,10 +102,10 @@ import { AdminLoginComponent } from './components/admin-login.component';
         <app-nav-bar></app-nav-bar>
       }
     </div>
-  `,
+  `
 })
 export class App {
    store = inject(StoreService);
 }
 
-bootstrapApplication(App).catch((err) => console.error(err));
+bootstrapApplication(App, {providers: [provideZoneChangeDetection()]}).catch((err) => console.error(err));

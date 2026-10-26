@@ -1,11 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { StoreService } from '../services/store.service';
 
 @Component({
     selector: 'app-share-list-view',
-    standalone: true,
-    imports: [CommonModule],
+    imports: [],
     template: `
     <div class="pb-24">
       <div class="sticky top-0 bg-white/90 backdrop-blur-md p-6 border-b border-gray-100 z-10 flex justify-between items-center">
@@ -13,7 +12,9 @@ import { StoreService } from '../services/store.service';
           <h2 class="text-2xl font-black text-[#003366]">分享清單</h2>
           <p class="text-xs text-gray-400 font-medium">共 {{ store.cart().length }} 項產品</p>
         </div>
-        <button *ngIf="store.cart().length > 0" (click)="store.clearCart()" class="text-xs font-bold text-red-400 bg-red-50 px-3 py-1 rounded-full">清空全部</button>
+        @if (store.cart().length > 0) {
+          <button (click)="store.clearCart()" class="text-xs font-bold text-red-400 bg-red-50 px-3 py-1 rounded-full">清空全部</button>
+        }
       </div>
 
       <div class="p-6">
@@ -55,7 +56,7 @@ import { StoreService } from '../services/store.service';
         }
       </div>
     </div>
-  `,
+    `,
     styles: [`
     @keyframes slide-up {
       from { transform: translateY(20px); opacity: 0; }
