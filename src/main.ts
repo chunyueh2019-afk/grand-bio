@@ -1,4 +1,4 @@
-import { Component, inject, provideZoneChangeDetection } from '@angular/core';
+import { Component, inject, provideZoneChangeDetection, isDevMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 
 import { StoreService } from './services/store.service';
@@ -9,6 +9,7 @@ import { ProductDetailViewComponent } from './components/product-detail-view.com
 import { AdminDashboardComponent } from './components/admin-dashboard.component';
 import { AdminProductEditComponent } from './components/admin-product-edit.component';
 import { AdminLoginComponent } from './components/admin-login.component';
+import { provideServiceWorker } from '@angular/service-worker';
 
 @Component({
     selector: 'app-root',
@@ -22,7 +23,14 @@ import { AdminLoginComponent } from './components/admin-login.component';
     AdminLoginComponent
 ],
     template: `
-    <div class="max-w-md mx-auto min-h-screen bg-white shadow-2xl relative overflow-hidden" [class.max-w-none]="store.currentView().startsWith('ADMIN')">
+    <div class="max-w-md mx-auto min-h-screen bg-white shadow-soft relative overflow-hidden sm:my-8 sm:min-h-[calc(100vh-4rem)] sm:rounded-[2rem]" [class.max-w-none]="store.currentView().startsWith('ADMIN')">
+
+      @if (!store.isOnline()) {
+        <div class="sticky top-0 z-[80] flex items-center justify-center gap-2 bg-amber-50 px-4 py-2 text-xs font-bold text-amber-800 border-b border-amber-100" role="status">
+          <span class="material-symbols-rounded text-base">cloud_off</span>
+          離線瀏覽中 · 顯示上次同步內容（{{ store.lastSyncedLabel() }}）
+        </div>
+      }
       
       <!-- Dynamic View Container -->
       <div class="content-container">
@@ -108,4 +116,7 @@ export class App {
    store = inject(StoreService);
 }
 
-bootstrapApplication(App, {providers: [provideZoneChangeDetection()]}).catch((err) => console.error(err));
+bootstrapApplication(App, {providers: [provideZoneChangeDetection(), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })]}).catch((err) => console.error(err));

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 
 import { StoreService } from '../services/store.service';
 import { ProductCategory } from '../types';
@@ -13,6 +13,7 @@ import { ProductCategory } from '../types';
         <div class="max-w-md mx-auto relative mb-4">
            <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
            <input type="text" placeholder="搜尋產品名稱、証號..." 
+                  [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
                   class="w-full pl-12 pr-4 py-3 bg-gray-100 rounded-2xl border-none outline-none focus:ring-2 focus:ring-[#003366]/20 transition-all text-sm font-medium">
         </div>
         
@@ -27,7 +28,7 @@ import { ProductCategory } from '../types';
 
       <!-- Products Grid -->
       <div class="p-4 grid grid-cols-2 gap-4 mt-2">
-         @for (p of store.filteredProducts(); track p.id) {
+         @for (p of visibleProducts(); track p.id) {
             <div (click)="store.viewProduct(p.id)" class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-50 flex flex-col group active:scale-[0.98] transition-all">
                <div class="h-40 bg-gray-50 p-4 flex items-center justify-center relative">
                   <img [src]="p.imageUrl" class="max-w-full max-h-full object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300" alt="p">
@@ -48,8 +49,11 @@ import { ProductCategory } from '../types';
             </div>
          } @empty {
             <div class="col-span-2 py-20 text-center space-y-4">
-               <span class="material-symbols-rounded text-6xl text-gray-200">sentiment_dissatisfied</span>
-               <p class="text-gray-400 font-medium italic">目前分類尚無項目</p>
+               <span class="material-symbols-rounded text-6xl text-gray-200">{{ store.isLoading() ? 'progress_activity' : 'inventory_2' }}</span>
+               <p class="text-gray-400 font-medium">{{ emptyMessage() }}</p>
+               @if (!store.isOnline()) {
+                 <p class="text-xs text-amber-600">恢復連線後將自動同步最新產品</p>
+               }
             </div>
          }
       </div>
@@ -58,6 +62,22 @@ import { ProductCategory } from '../types';
 })
 export class ProductListViewComponent {
    store = inject(StoreService);
+   searchQuery = signal('');
+   visibleProducts = computed(() => {
+      const query = this.searchQuery().trim().toLocaleLowerCase('zh-Hant');
+      if (!query) return this.store.filteredProducts();
+      return this.store.filteredProducts().filter(product =>
+         [product.name, product.permitNumber, product.categoryLabel, product.origin]
+            .filter(Boolean)
+            .some(value => value!.toLocaleLowerCase('zh-Hant').includes(query))
+      );
+   });
+   emptyMessage = computed(() => {
+      if (this.store.isLoading()) return '正在同步產品資料…';
+      if (this.searchQuery().trim()) return '找不到符合搜尋條件的產品';
+      if (!this.store.isOnline()) return '尚無可用的離線產品資料';
+      return '目前分類尚無項目';
+   });
    categories: { id: ProductCategory; label: string }[] = [
       { id: 'ALL', label: '全部產品' },
       { id: 'DRUG', label: '醫藥服務' },

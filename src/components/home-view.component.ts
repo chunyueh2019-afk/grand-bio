@@ -47,6 +47,10 @@ import { ProductCategory } from '../types';
         </div>
 
         <div class="mb-2">
+          <div class="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-bold tracking-wide text-blue-50 backdrop-blur">
+            <span class="h-1.5 w-1.5 rounded-full" [class.bg-emerald-300]="store.isOnline()" [class.bg-amber-300]="!store.isOnline()"></span>
+            {{ store.isOnline() ? '雲端資料已連線' : '離線型錄模式' }}
+          </div>
           <h2 class="text-2xl font-bold mb-1">{{ store.companyInfo().slogan }}</h2>
           <p class="text-blue-100 text-sm opacity-80">專業代理高品質醫療器材與保健食品</p>
         </div>
@@ -70,6 +74,10 @@ import { ProductCategory } from '../types';
 
       <!-- Quick Sections -->
       <div class="px-6 mt-8 space-y-4">
+        <div class="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-[11px] text-slate-500">
+          <span class="flex items-center gap-2 font-medium"><span class="material-symbols-rounded text-base text-[#0878c9]">offline_bolt</span>此型錄可安裝並離線瀏覽</span>
+          <span>{{ store.lastSyncedLabel() }}</span>
+        </div>
         <div (click)="store.setView('CATALOGS')" class="bg-gradient-to-r from-[#003366] to-[#004d99] p-6 rounded-3xl text-white flex justify-between items-center shadow-lg active:scale-[0.98] transition-transform">
           <div>
             <h3 class="font-bold text-lg">電子型錄索取</h3>

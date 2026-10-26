@@ -6,7 +6,7 @@ import { StoreService } from '../services/store.service';
     selector: 'app-nav-bar',
     imports: [],
     template: `
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-2 pb-6 flex justify-between items-center z-50">
+    <nav class="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 bg-white/95 backdrop-blur-xl border-t border-gray-100 px-6 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))] flex justify-between items-center z-50 sm:rounded-b-[2rem]">
       <button (click)="store.setView('HOME')" [class.text-[#003366]]="store.currentView() === 'HOME'" class="flex flex-col items-center gap-1 text-gray-400">
         <span class="material-symbols-rounded" [class.icon-filled]="store.currentView() === 'HOME'">home</span>
         <span class="text-[10px] font-medium">首頁</span>

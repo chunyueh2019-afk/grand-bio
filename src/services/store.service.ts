@@ -2,6 +2,14 @@ import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { Product, ProductCategory, CompanyInfo } from '../types';
 import { SupabaseService } from './supabase.service';
 
+const CACHE_KEYS = {
+  products: 'grand-bio.products.v1',
+  company: 'grand-bio.company.v1',
+  cart: 'grand-bio.cart.v1',
+  history: 'grand-bio.history.v1',
+  syncedAt: 'grand-bio.synced-at.v1'
+} as const;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,6 +20,19 @@ export class StoreService {
   readonly currentView = signal<'HOME' | 'LIST' | 'DETAIL' | 'ADMIN' | 'SHARE' | 'ADMIN_EDIT' | 'CATALOGS' | 'CONTACT' | 'LOGIN'>('HOME');
   readonly currentCategory = signal<ProductCategory | 'ALL' | 'FAVORITES' | 'HISTORY'>('ALL');
   readonly selectedProductId = signal<string | null>(null);
+
+  // Connectivity & offline state
+  readonly isOnline = signal(typeof navigator === 'undefined' ? true : navigator.onLine);
+  readonly usingOfflineData = signal(false);
+  readonly isLoading = signal(true);
+  readonly lastSyncedAt = signal<string | null>(this.readCache<string>(CACHE_KEYS.syncedAt));
+  readonly lastSyncedLabel = computed(() => {
+    const value = this.lastSyncedAt();
+    if (!value) return '尚未同步';
+    return new Intl.DateTimeFormat('zh-TW', {
+      month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    }).format(new Date(value));
+  });
 
   // Auth State
   readonly isLoggedIn = signal<boolean>(false);
@@ -39,24 +60,28 @@ export class StoreService {
   });
 
   constructor() {
+    this.restoreCachedState();
+    this.bindConnectivityEvents();
+    effect(() => this.writeCache(CACHE_KEYS.cart, this.cart()));
+    effect(() => this.writeCache(CACHE_KEYS.history, this.history()));
     this.init();
     this.checkAuthStatus();
   }
 
   private async init() {
-    try {
-      await this.loadProducts();
-      await this.loadCompanyInfo();
-    } catch (error) {
-      console.error('Failed to initialize data:', error);
-    }
+    await Promise.allSettled([this.loadProducts(), this.loadCompanyInfo()]);
+    this.isLoading.set(false);
   }
 
   async checkAuthStatus() {
-    const user = await this.supabaseService.getCurrentUser();
-    if (user) {
-      this.isLoggedIn.set(true);
-      this.currentUser.set(user);
+    try {
+      const user = await this.supabaseService.getCurrentUser();
+      if (user) {
+        this.isLoggedIn.set(true);
+        this.currentUser.set(user);
+      }
+    } catch {
+      // Authentication is online-only; catalog browsing remains available offline.
     }
   }
 
@@ -76,23 +101,85 @@ export class StoreService {
         isFavorite: p.is_favorite
       }));
       this.products.set(mapped);
+      this.writeCache(CACHE_KEYS.products, mapped);
+      this.usingOfflineData.set(false);
+      this.markSyncComplete();
     } catch (error) {
       console.error('Error loading products:', error);
+      this.usingOfflineData.set(true);
     }
   }
 
   async loadCompanyInfo() {
-    const data = await this.supabaseService.getCompanyInfo();
-    if (data) {
-      this.companyInfo.set({
-        name: data.name,
-        slogan: data.slogan,
-        address: data.address,
-        phone: data.phone,
-        email: data.email,
-        serviceHours: data.service_hours,
-        lineUrl: data.line_url
-      });
+    try {
+      const data = await this.supabaseService.getCompanyInfo();
+      if (data) {
+        const mapped = {
+          name: data.name,
+          slogan: data.slogan,
+          address: data.address,
+          phone: data.phone,
+          email: data.email,
+          serviceHours: data.service_hours,
+          lineUrl: data.line_url
+        };
+        this.companyInfo.set(mapped);
+        this.writeCache(CACHE_KEYS.company, mapped);
+        this.markSyncComplete();
+      }
+    } catch (error) {
+      console.error('Error loading company information:', error);
+      this.usingOfflineData.set(true);
+    }
+  }
+
+  private restoreCachedState() {
+    const products = this.readCache<Product[]>(CACHE_KEYS.products);
+    const company = this.readCache<CompanyInfo>(CACHE_KEYS.company);
+    const cart = this.readCache<Product[]>(CACHE_KEYS.cart);
+    const history = this.readCache<string[]>(CACHE_KEYS.history);
+
+    if (products?.length) this.products.set(products);
+    if (company) this.companyInfo.set(company);
+    if (cart) this.cart.set(cart);
+    if (history) this.history.set(history);
+    if (!this.isOnline() && (products?.length || company)) this.usingOfflineData.set(true);
+  }
+
+  private bindConnectivityEvents() {
+    if (typeof window === 'undefined') return;
+    window.addEventListener('offline', () => {
+      this.isOnline.set(false);
+      this.usingOfflineData.set(true);
+    });
+    window.addEventListener('online', () => {
+      this.isOnline.set(true);
+      void Promise.allSettled([this.loadProducts(), this.loadCompanyInfo()]);
+    });
+  }
+
+  private markSyncComplete() {
+    const now = new Date().toISOString();
+    this.lastSyncedAt.set(now);
+    this.writeCache(CACHE_KEYS.syncedAt, now);
+  }
+
+  private readCache<T>(key: string): T | null {
+    if (typeof localStorage === 'undefined') return null;
+    try {
+      const value = localStorage.getItem(key);
+      return value ? JSON.parse(value) as T : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private writeCache(key: string, value: unknown) {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Browsing should continue even if storage is unavailable or full.
     }
   }
 
@@ -190,8 +277,14 @@ export class StoreService {
     const p = this.products().find(x => x.id === id);
     if (!p) return;
     const newState = !p.isFavorite;
-    await this.supabaseService.updateProduct(id, { is_favorite: newState });
     this.products.update(list => list.map(x => x.id === id ? { ...x, isFavorite: newState } : x));
+    this.writeCache(CACHE_KEYS.products, this.products());
+    if (!this.isOnline()) return;
+    try {
+      await this.supabaseService.updateProduct(id, { is_favorite: newState });
+    } catch {
+      this.usingOfflineData.set(true);
+    }
   }
 
   addToShareList(p: Product) { if (!this.cart().find(x => x.id === p.id)) this.cart.update(c => [...c, p]); }
